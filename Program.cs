@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
 builder.Services.AddDbContext<dbposrcContext>(options =>
     {
-        options.UseMySql(builder.Configuration.GetConnectionString("cnPos"),serverVersion);
+        options.UseMySql(builder.Configuration.GetConnectionString("cnPos"), serverVersion);
     });
 var app = builder.Build();
 
@@ -19,20 +19,20 @@ app.MapGet("/dbconexion", async ([FromServices] dbposrcContext dbContext) =>
 //ConsultarProductos
 app.MapGet("/api/productos", async ([FromServices] dbposrcContext dbContext) =>
 {
-     return Results.Ok(dbContext.TProductos);
+    return Results.Ok(dbContext.TProductos);
 });
 
 //Listar Cuentas productos
 app.MapGet("/api/cuentasp", async ([FromServices] dbposrcContext dbContext) =>
 {
-     return Results.Ok(dbContext.TCuentasProductos.FirstOrDefault());
+    return Results.Ok(dbContext.TCuentasProductos.FirstOrDefault());
 });
 
 //Consultar cuenta
-app.MapGet("/api/cuentasp/{id}", async ([FromServices] dbposrcContext dbContext,[FromRoute] uint id) =>
+app.MapGet("/api/cuentasp/{id}", async ([FromServices] dbposrcContext dbContext, [FromRoute] uint id) =>
 {
     var cuentaActual = dbContext.TCuentasProductos.Find(id);
-    if(cuentaActual != null)
+    if (cuentaActual != null)
     {
         return Results.Ok(cuentaActual);
     }
@@ -40,7 +40,7 @@ app.MapGet("/api/cuentasp/{id}", async ([FromServices] dbposrcContext dbContext,
 });
 
 //Crear cuenta
-app.MapPost("/api/cuentasp",async ([FromServices] dbposrcContext dbContext,[FromBody] TCuentasProducto cuentas )=>
+app.MapPost("/api/cuentasp", async ([FromServices] dbposrcContext dbContext, [FromBody] TCuentasProducto cuentas) =>
 {
     await dbContext.AddAsync(cuentas);
     await dbContext.SaveChangesAsync();
@@ -73,5 +73,12 @@ app.MapGet("/api/productosgrupo/{id}", async ([FromServices] dbposrcContext dbCo
     }
     return Results.NotFound();
 });
+
+//listar mesas
+app.MapGet("/api/mesas", async ([FromServices] dbposrcContext dbContext) =>
+{
+    return Results.Ok(dbContext.TMesas);
+});
+
 
 app.Run();
